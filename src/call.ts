@@ -14,6 +14,7 @@ export class Call {
     public callReceiverId: string;
     public startedAt: string;
     public endedAt: string;
+    public duration: number;
     public status: CallStatus
 
 }
