@@ -29,6 +29,7 @@ export class Cdr extends Contract {
                 callReceiverId,
                 startedAt,
                 endedAt: null,
+                duration: 0,
                 status: CallStatus.StartCreated
             }
             const callId = this.getHash(call)
@@ -86,12 +87,13 @@ export class Cdr extends Contract {
         
         // update call object
         call.endedAt = this.getTxTimestamp(ctx)
+        call.duration = +call.endedAt - +call.startedAt
         call.status = CallStatus.Ended
         const newCallBuffer = Buffer.from(JSON.stringify(call));
         await ctx.stub.putState(callId, newCallBuffer)
 
         // raise event
-        const eventBuffer = Buffer.from(JSON.stringify({ callId }))
+        const eventBuffer = Buffer.from(JSON.stringify({ callId, endedAt: call.endedAt, duration: call.duration }))
         ctx.stub.setEvent(CallEvents.callEnded, eventBuffer)
 
         // return useful values
