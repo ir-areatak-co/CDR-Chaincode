@@ -1,0 +1,44 @@
+[
+    {
+        "transactionName": "cdrExists",
+        "transactionLabel": "A test cdrExists transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "createCdr",
+        "transactionLabel": "A test createCdr transaction",
+        "arguments": [
+            "001",
+            "some value"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "readCdr",
+        "transactionLabel": "A test readCdr transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "updateCdr",
+        "transactionLabel": "A test updateCdr transaction",
+        "arguments": [
+            "001",
+            "some other value"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "deleteCdr",
+        "transactionLabel": "A test deleteCdr transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    }
+]
