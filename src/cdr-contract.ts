@@ -79,7 +79,7 @@ export class Cdr extends Contract {
         if (call.status !== CallStatus.StartAccepted) throw new Error('Call cannot be Ended')
         
         // update call object
-        call.endedAt = ctx.stub.getTxTimestamp().toString()
+        call.endedAt = this.getTxTimestamp(ctx)
         call.status = CallStatus.Ended
         const newCallBuffer = Buffer.from(JSON.stringify(call));
         await ctx.stub.putState(callId, newCallBuffer)
@@ -96,5 +96,11 @@ export class Cdr extends Contract {
             .digest("hex")
             .substring(0, 7);
     }
+
+    private getTxTimestamp(ctx: Context): string {
+        const timestamp = ctx.stub.getTxTimestamp()
+        return (timestamp.getSeconds() * 1000 + timestamp.getNanos() / 1000000).toString()
+    }
+    
 
 }
