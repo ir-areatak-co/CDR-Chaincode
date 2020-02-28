@@ -40,6 +40,9 @@ export class Cdr extends Contract {
             // raise event
             const eventBuffer = Buffer.from(JSON.stringify({ callId, ...call }))
             ctx.stub.setEvent(CallEvents.callStartCreated, eventBuffer)
+
+            // return useful values
+            return { callId, status: call.status }
     }
 
     @Transaction()
@@ -66,6 +69,9 @@ export class Cdr extends Contract {
         // raise event
         const eventBuffer = Buffer.from(JSON.stringify({ callId }))
         ctx.stub.setEvent(CallEvents.callStartAccepted, eventBuffer)
+
+        // return useful values
+        return { callId, status: call.status }
     }
 
     @Transaction()
@@ -87,6 +93,9 @@ export class Cdr extends Contract {
         // raise event
         const eventBuffer = Buffer.from(JSON.stringify({ callId }))
         ctx.stub.setEvent(CallEvents.callEnded, eventBuffer)
+
+        // return useful values
+        return { callId, status: call.status }
     }
 
     // Private Methods
