@@ -42,6 +42,32 @@ export class Cdr extends Contract {
             ctx.stub.setEvent(CallEvents.callStartCreated, eventBuffer)
     }
 
+    @Transaction()
+    public async AcceptCallStart(ctx: Context, callId: string) {
+        // get transaction sender CN
+        const transactionSender = ctx.clientIdentity.getX509Certificate().subject.commonName
+
+        // get state by callId
+        const callBuffer = await ctx.stub.getState(callId)
+        let call = JSON.parse(callBuffer.toString()) as Call
+        if (!call) throw new Error('Invalid call id')
+
+        // check call sender is equal to transaction sender
+        if (call.senderOperator !== transactionSender) throw new Error('Permission denied to accept call start')
+
+        // check if call start has been created before
+        if (call.status !== CallStatus.StartCreated) throw new Error('Call Start cannot be accepted')
+
+        // Put new state
+        call.status = CallStatus.StartAccepted
+        const newCallBuffer = Buffer.from(JSON.stringify(call));
+        await ctx.stub.putState(callId, newCallBuffer)
+
+        // raise event
+        const eventBuffer = Buffer.from(JSON.stringify({ callId }))
+        ctx.stub.setEvent(CallEvents.callStartAccepted, eventBuffer)
+    }
+
     // Private Methods
     private getHash(data) {
         return hash("SHA256")
