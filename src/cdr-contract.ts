@@ -68,6 +68,27 @@ export class Cdr extends Contract {
         ctx.stub.setEvent(CallEvents.callStartAccepted, eventBuffer)
     }
 
+    @Transaction()
+    public async endCall(ctx: Context, callId: string) {
+        // get state by callId
+        const callBuffer = await ctx.stub.getState(callId)
+        let call = JSON.parse(callBuffer.toString()) as Call
+        if (!call) throw new Error('Invalid call id')
+
+        // check if call has been accepted before
+        if (call.status !== CallStatus.StartAccepted) throw new Error('Call cannot be Ended')
+        
+        // update call object
+        call.endedAt = ctx.stub.getTxTimestamp().toString()
+        call.status = CallStatus.Ended
+        const newCallBuffer = Buffer.from(JSON.stringify(call));
+        await ctx.stub.putState(callId, newCallBuffer)
+
+        // raise event
+        const eventBuffer = Buffer.from(JSON.stringify({ callId }))
+        ctx.stub.setEvent(CallEvents.callEnded, eventBuffer)
+    }
+
     // Private Methods
     private getHash(data) {
         return hash("SHA256")
